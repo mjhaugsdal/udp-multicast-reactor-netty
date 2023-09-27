@@ -31,23 +31,27 @@ public class MulticastPublisher {
         var group = InetAddress.getByName(udpHost);
         try (var socket = new MulticastSocket(udpPort)) {
             while (true) {
-                var is = MulticastPublisher.class.getClassLoader().getResourceAsStream("3KiB.bin");
-                assert is != null;
-                var bytes = is.readAllBytes();
-                message = Unpooled.copiedBuffer(bytes);
+
+//                var is = MulticastPublisher.class.getClassLoader().getResourceAsStream("3KiB.bin");
+//                assert is != null;
+//                var bytes = is.readAllBytes();
+                var testValue = "Hello world!";
+//                message = Unpooled.copiedBuffer(testValue.getBytes());
 
                 Thread.sleep(1000);
 
-                var split = split(message, group, udpPort);
+//                var split = split(message, group, udpPort);
 
-                split.forEach(datagramPacket -> {
-                    try {
-                        socket.send(datagramPacket);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                });
+                socket.send(new DatagramPacket(testValue.getBytes(), testValue.length(), group, udpPort));
+
+//                .forEach(datagramPacket -> {
+//                    try {
+//                        socket.send(datagramPacket);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        throw new RuntimeException(e);
+//                    }
+//                });
 
             }
 
@@ -58,13 +62,12 @@ public class MulticastPublisher {
 
     List<DatagramPacket> split(ByteBuf message, InetAddress group, int udpPort) {
 
-        var id = 1234;
+//        var id = 1234;
         var list = new ArrayList<DatagramPacket>();
         while (message.readableBytes() > 1024) {
-            id++;
             var bytes = new byte[1024];
             message.readBytes(bytes);
-            byte[] both = ArrayUtils.addAll(String.valueOf(id).getBytes(), bytes);
+            byte[] both = ArrayUtils.addAll(String.valueOf(1024).getBytes(), bytes);
 
             list.add(new DatagramPacket(both, 1028, group, udpPort));
         }
@@ -73,7 +76,7 @@ public class MulticastPublisher {
             var remainder = message.readableBytes();
             var bytes = new byte[remainder];
             message.readBytes(bytes);
-            byte[] both = ArrayUtils.addAll(String.valueOf(id + 1).getBytes(), bytes);
+            byte[] both = ArrayUtils.addAll(String.valueOf(remainder).getBytes(), bytes);
             list.add(new DatagramPacket(both, remainder + 4, group, udpPort));
         }
         return list;

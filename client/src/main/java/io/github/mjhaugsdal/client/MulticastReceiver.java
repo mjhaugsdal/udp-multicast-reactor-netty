@@ -53,6 +53,7 @@ public class MulticastReceiver {
                             .subscribe(myPacket -> {
                                 var header = myPacket.getHeader();
                                 var payload = myPacket.getPayload();
+                                System.out.println(new String(myPacket.getPayload()));
                             });
                     return Flux.never();
                 }).bind().block();

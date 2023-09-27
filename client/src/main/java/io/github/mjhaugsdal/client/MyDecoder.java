@@ -10,9 +10,9 @@ import java.util.List;
 public class MyDecoder extends MessageToMessageDecoder<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-        var header = byteBuf.readCharSequence(4, StandardCharsets.US_ASCII);
+//        var header = byteBuf.readCharSequence(4, StandardCharsets.US_ASCII);
         var buf = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(buf);
-        list.add(new MyPacket(header.toString(), buf));
+        list.add(new MyPacket("", buf));
     }
 }
