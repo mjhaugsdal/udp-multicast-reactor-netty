@@ -28,31 +28,12 @@ public class MulticastPublisher {
 
     @PostConstruct
     void start() throws IOException, InterruptedException {
-        var group = InetAddress.getByName(udpHost);
+        var group = InetAddress.getByName("0.0.0.0");
         try (var socket = new MulticastSocket(udpPort)) {
             while (true) {
-
-//                var is = MulticastPublisher.class.getClassLoader().getResourceAsStream("3KiB.bin");
-//                assert is != null;
-//                var bytes = is.readAllBytes();
                 var testValue = "Hello world!";
-//                message = Unpooled.copiedBuffer(testValue.getBytes());
-
                 Thread.sleep(1000);
-
-//                var split = split(message, group, udpPort);
-
                 socket.send(new DatagramPacket(testValue.getBytes(), testValue.length(), group, udpPort));
-
-//                .forEach(datagramPacket -> {
-//                    try {
-//                        socket.send(datagramPacket);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                        throw new RuntimeException(e);
-//                    }
-//                });
-
             }
 
         } catch (Exception e) {
